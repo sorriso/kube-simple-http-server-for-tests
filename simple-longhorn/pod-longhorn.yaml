@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-test-longhorn
+  namespace: test-longhorn
+  labels:
+    app: pod-test-longhorn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pod-test-longhorn
+  template:
+    metadata:
+      labels:
+        app: pod-test-longhorn
+    spec:
+      containers:
+      - name: pod-test-longhorn
+        image: nginx:1.23.1-alpine
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 80
+            protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 512Mi
+          requests:
+            cpu: 10m
+            memory: 128Mi
+        volumeMounts:
+          - name: nginx-configuration
+            mountPath: /etc/nginx/nginx.conf
+            subPath: NGINX_CONF_KEY
+          - name: application-configuration
+            mountPath: /etc/nginx/nginx.d/app.conf
+            subPath: APP_CONF_KEY
+          - name: application-html
+            mountPath: /usr/share/nginx/html/index.html
+            subPath: APP_HTML_KEY
+          - name: volv
+            mountPath: /data
+      volumes:
+        - name: nginx-configuration
+          secret:
+            secretName: pod-test-longhorn-secret
+        - name: application-configuration
+          secret:
+            secretName: pod-test-longhorn-secret
+        - name: application-html
+          secret:
+            secretName: pod-test-longhorn-secret
+        - name: volv
+          persistentVolumeClaim:
+            claimName: test-longhorn-pvc

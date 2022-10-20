@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pod-test-service
+  namespace: test-ingress
+  labels:
+    app: pod-test-ingress
+spec:
+  selector:
+    app: pod-test-ingress
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 80

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pod-test-longhorn-service
+  namespace: test-longhorn
+spec:
+  selector:
+    app: pod-test-longhorn
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 80
