@@ -5,23 +5,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pod-test-ingress-https
-  namespace: test-ingress-https
+  name: pod-test-ingress-https-vault
+  namespace: test-ingress-https-vault
   labels:
-    app: pod-test-ingress-https
+    app: pod-test-ingress-https-vault
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pod-test-ingress-https
+      app: pod-test-ingress-https-vault
   template:
     metadata:
       labels:
-        app: pod-test-ingress-https
+        app: pod-test-ingress-https-vault
     spec:
       containers:
 
-      - name: pod-test-ingress-https
+      - name: pod-test-ingress-https-vault
         image: l_nginx:latest
         imagePullPolicy: Never
 
