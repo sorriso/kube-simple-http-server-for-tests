@@ -16,6 +16,6 @@ spec:
     - match: HostSNI(`simple.kube.local`)
       services:
         - name: pod-test-service
-          port: 7654
+          port: 8765
   tls:
     passthrough: true
