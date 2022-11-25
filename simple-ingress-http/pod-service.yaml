@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pod-test-service
-  namespace: test-ingress
+  namespace: test-ingress-http
   labels:
     app: pod-test-ingress
 spec:
@@ -11,5 +11,5 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: 8080
-      targetPort: 80
+      port: 6543
+      targetPort: 6543

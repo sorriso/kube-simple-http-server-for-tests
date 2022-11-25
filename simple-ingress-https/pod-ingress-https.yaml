@@ -1,22 +1,21 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
 metadata:
-  name: pod-test-ingress-http
+  name: simple-ingress-https
   namespace: test-ingress
   labels:
-    app: pod-test-ingress
+    app: simple-ingress-https
+    layer: edge
   annotations:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/custom-response-headers: "Access-Control-Allow-Origin:*||Access-Control-Allow-Methods:GET,POST,OPTIONS||Access-Control-Allow-Headers:DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range||Access-Control-Expose-Headers:Content-Length,Content-Range"
 spec:
-  rules:
-    - host: "simple.kube.local"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: pod-test-service
-                port:
-                  number: 8080
+  entryPoints:
+    - websecure
+  routes:
+    - match: HostSNI(`simple.kube.local`)
+      services:
+        - name: pod-test-service
+          port: 7654
+  tls:
+    passthrough: true

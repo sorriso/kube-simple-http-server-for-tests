@@ -16,36 +16,70 @@ spec:
         app: pod-test-simple
     spec:
       containers:
+
       - name: pod-test-simple
         image: nginx:1.23.1-alpine
         imagePullPolicy: Always
+
         ports:
-          - containerPort: 80
+
+          - containerPort: 4321
             protocol: TCP
+
         resources:
+
           limits:
             cpu: 100m
             memory: 512Mi
+
           requests:
             cpu: 10m
             memory: 128Mi
+
+        readinessProbe:
+            
+          exec:
+            command: ["curl", "--silent", "http://localhost:4321/status"]
+          failureThreshold: 2
+          initialDelaySeconds: 4
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+
+        livenessProbe:
+
+          tcpSocket:
+            port: 4321
+          failureThreshold: 6
+          initialDelaySeconds: 8
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 5
+
         volumeMounts:
+
           - name: nginx-configuration
             mountPath: /etc/nginx/nginx.conf
             subPath: NGINX_CONF_KEY
+
           - name: application-configuration
             mountPath: /etc/nginx/nginx.d/app.conf
             subPath: APP_CONF_KEY
+
           - name: application-html
             mountPath: /usr/share/nginx/html/index.html
             subPath: APP_HTML_KEY
+
       volumes:
+
         - name: nginx-configuration
           secret:
-            secretName: pod-secret-simple
+            secretName: test-simple-secret
+
         - name: application-configuration
           secret:
-            secretName: pod-secret-simple
+            secretName: test-simple-secret
+
         - name: application-html
           secret:
-            secretName: pod-secret-simple
+            secretName: test-simple-secret

@@ -1,0 +1,115 @@
+# kubectl -n test-ingress-https exec -it pod-test-ingress-https-77d56d44ff-92p98 -- /bin/sh
+# kubectl --namespace test-ingress-https logs pod-test-ingress-https-77d56d44ff-92p98
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-test-ingress-https
+  namespace: test-ingress-https
+  labels:
+    app: pod-test-ingress-https
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pod-test-ingress-https
+  template:
+    metadata:
+      labels:
+        app: pod-test-ingress-https
+    spec:
+      containers:
+
+      - name: pod-test-ingress-https
+        image: l_nginx:latest
+        imagePullPolicy: Never
+
+        ports:
+
+          - containerPort: 7654
+            protocol: TCP
+          - containerPort: 7653
+            protocol: TCP
+
+        resources:
+
+          limits:
+            cpu: 100m
+            memory: 512Mi
+
+          requests:
+            cpu: 10m
+            memory: 128Mi
+
+        readinessProbe:
+
+          exec:
+            command: ["curl", "--silent", "https://localhost:7654/status"]
+          failureThreshold: 2
+          initialDelaySeconds: 4
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+
+        livenessProbe:
+
+          tcpSocket:
+            port: 7654
+          failureThreshold: 6
+          initialDelaySeconds: 8
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 5
+
+        volumeMounts:
+
+          - name: nginx-configuration
+            mountPath: /etc/nginx/nginx.conf
+            subPath: NGINX_CONF_KEY
+
+          - name: application-configuration
+            mountPath: /etc/nginx/nginx.d/app.conf
+            subPath: APP_CONF_KEY
+
+          - name: application-html
+            mountPath: /usr/share/nginx/html/index.html
+            subPath: APP_HTML_KEY
+
+
+          - name: ca-ext-pem
+            mountPath: /etc/nginx/ssl/ext/ca-ext.pem
+            subPath: ca.crt
+
+          - name: simple-pem
+            mountPath: /etc/nginx/ssl/ext/cert-ext.pem
+            subPath: cert.crt
+
+          - name: simple-privkey
+            mountPath: /etc/nginx/ssl/ext/cert-ext.key
+            subPath: cert.key
+
+      volumes:
+
+        - name: nginx-configuration
+          secret:
+            secretName: pod-test-ingress-secret
+
+        - name: application-configuration
+          secret:
+            secretName: pod-test-ingress-secret
+
+        - name: application-html
+          secret:
+            secretName: pod-test-ingress-secret
+
+
+        - name: ca-ext-pem
+          secret:
+            secretName: pod-test-ingress-https-secret
+
+        - name: simple-pem
+          secret:
+            secretName: pod-test-ingress-https-secret
+
+        - name: simple-privkey
+          secret:
+            secretName: pod-test-ingress-https-secret

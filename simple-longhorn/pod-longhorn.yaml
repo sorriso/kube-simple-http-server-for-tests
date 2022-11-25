@@ -19,38 +19,73 @@ spec:
       - name: pod-test-longhorn
         image: nginx:1.23.1-alpine
         imagePullPolicy: Always
+
         ports:
-          - containerPort: 80
+
+          - containerPort: 5432
             protocol: TCP
+
         resources:
+
           limits:
             cpu: 100m
             memory: 512Mi
+
           requests:
             cpu: 10m
             memory: 128Mi
+
+        readinessProbe:
+
+          exec:
+            command: ["curl", "--silent", "http://localhost:5432/status"]
+          failureThreshold: 2
+          initialDelaySeconds: 4
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+
+        livenessProbe:
+
+          tcpSocket:
+            port: 5432
+          failureThreshold: 6
+          initialDelaySeconds: 8
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 5
+
         volumeMounts:
+
           - name: nginx-configuration
             mountPath: /etc/nginx/nginx.conf
             subPath: NGINX_CONF_KEY
+
           - name: application-configuration
             mountPath: /etc/nginx/nginx.d/app.conf
             subPath: APP_CONF_KEY
+
           - name: application-html
             mountPath: /usr/share/nginx/html/index.html
             subPath: APP_HTML_KEY
-          - name: volv
+
+          - name: longhorn-persisten-volume
             mountPath: /data
+
       volumes:
+
         - name: nginx-configuration
           secret:
             secretName: pod-test-longhorn-secret
+
         - name: application-configuration
           secret:
             secretName: pod-test-longhorn-secret
+
         - name: application-html
           secret:
             secretName: pod-test-longhorn-secret
-        - name: volv
+
+        - name: longhorn-persisten-volume
           persistentVolumeClaim:
-            claimName: test-longhorn-pvc
+            claimName: pod-test-longhorn-pvc
