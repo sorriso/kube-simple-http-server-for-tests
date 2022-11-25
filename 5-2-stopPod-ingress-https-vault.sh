@@ -1,3 +1,3 @@
 kubectl delete -f simple-ingress-https-vault
 
-kubectl delete secret pod-test-ingress-https-vault-secret
+kubectl delete secret simple-nginx-certificate -n simple-ingress-https-vault
