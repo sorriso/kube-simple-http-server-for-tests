@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pod-test-sso-service
+  namespace: test-ingress-https-vault-sso
+  labels:
+    app: pod-test-ingress-https-vault-sso
+spec:
+  selector:
+    app: pod-test-ingress-https-vault-sso
+  ports:
+    - name: https
+      protocol: TCP
+      port: 8765
+      targetPort: 80
