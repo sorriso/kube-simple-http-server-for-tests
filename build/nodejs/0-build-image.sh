@@ -6,18 +6,22 @@ if [ -f env ]; then
     export $(cat env | grep -v '#' | sed 's/\r$//' | awk '/=/ {print $1}' )
 fi
 
-nerdctl -n k8s.io pull containerinfra/keycloak-gatekeeper:${KEYCLOAK_GATEKEEPER_VERSION}
+nerdctl -n k8s.io pull node:${NODEJS_VERSION}
+nerdctl -n k8s.io pull gcr.io/distroless/nodejs:${DISTROLESS_VERSION}
 
 rm -f ./ca.pem
+rm -f ./build.log
 
 cp ../../../kube-vault-dockerhub/certs/ca/ca.pem ./ca.pem
 
 nerdctl build \
    --no-cache \
    --file ./Dockerfile.quai \
-   --build-arg KEYCLOAK_GATEKEEPER_VERSION=${KEYCLOAK_GATEKEEPER_VERSION} \
+   --build-arg NODEJS_VERSION=${NODEJS_VERSION} \
+   --build-arg DISTROLESS_VERSION=${DISTROLESS_VERSION} \
    --namespace k8s.io \
-   -t l_keycloak-gatekeeper:latest .
+   --progress=plain \
+   -t l_nodejs:latest  . 2>&1 | tee ./build.log
 
 end=`date +%s`
 

@@ -1,0 +1,99 @@
+#1 [internal] load .dockerignore
+#1 transferring context: 2B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile.quai
+#2 transferring dockerfile: 594B 0.0s done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:18.12.1-alpine3.16
+#3 ...
+
+#4 [internal] load metadata for gcr.io/distroless/nodejs:18
+#4 DONE 0.4s
+
+#3 [internal] load metadata for docker.io/library/node:18.12.1-alpine3.16
+#3 DONE 1.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [stage-1 1/3] FROM gcr.io/distroless/nodejs:18@sha256:4d7a90fba0aba8d143f011ded99268423b7bac5ea509e62216c9318eef2a7477
+#6 resolve gcr.io/distroless/nodejs:18@sha256:4d7a90fba0aba8d143f011ded99268423b7bac5ea509e62216c9318eef2a7477
+#6 resolve gcr.io/distroless/nodejs:18@sha256:4d7a90fba0aba8d143f011ded99268423b7bac5ea509e62216c9318eef2a7477 0.1s done
+#6 CACHED
+
+#7 [build  1/10] FROM docker.io/library/node:18.12.1-alpine3.16@sha256:9eff44230b2fdcca57a73b8f908c8029e72d24dd05cac5339c79d3dedf6b208b
+#7 resolve docker.io/library/node:18.12.1-alpine3.16@sha256:9eff44230b2fdcca57a73b8f908c8029e72d24dd05cac5339c79d3dedf6b208b 0.1s done
+#7 CACHED
+
+#5 [internal] load build context
+#5 transferring context: 2.50kB 0.0s done
+#5 DONE 0.0s
+
+#8 [build  2/10] RUN mkdir -p /usr/src/app/ssl
+#8 DONE 0.3s
+
+#9 [build  3/10] WORKDIR /usr/src/app
+#9 DONE 0.1s
+
+#10 [build  4/10] COPY ./ca.pem /usr/src/app/ssl
+#10 DONE 0.1s
+
+#11 [build  5/10] COPY package.json /usr/src/app/
+#11 DONE 0.1s
+
+#12 [build  6/10] COPY ./app/*.js /usr/src/app/
+#12 DONE 0.1s
+
+#13 [build  7/10] COPY ./app/*.html /usr/src/app/
+#13 DONE 0.1s
+
+#14 [build  8/10] RUN npm install -g npm@9.2.0
+#14 11.81 
+#14 11.81 removed 14 packages, changed 75 packages, and audited 232 packages in 11s
+#14 11.81 
+#14 11.81 14 packages are looking for funding
+#14 11.81   run `npm fund` for details
+#14 11.82 
+#14 11.82 found 0 vulnerabilities
+#14 DONE 12.1s
+
+#15 [build  9/10] RUN npm install
+#15 4.855 
+#15 4.855 added 57 packages, and audited 58 packages in 4s
+#15 4.857 
+#15 4.857 7 packages are looking for funding
+#15 4.857   run `npm fund` for details
+#15 4.858 
+#15 4.858 found 0 vulnerabilities
+#15 DONE 5.0s
+
+#16 [build 10/10] RUN npm ci --only=production
+#16 0.994 npm WARN config only Use `--omit=dev` to omit dev dependencies from the install.
+#16 2.006 
+#16 2.006 added 57 packages, and audited 58 packages in 1s
+#16 2.006 
+#16 2.006 7 packages are looking for funding
+#16 2.006   run `npm fund` for details
+#16 2.008 
+#16 2.008 found 0 vulnerabilities
+#16 DONE 2.1s
+
+#17 [stage-1 2/3] COPY --from=build /usr/src/app /usr/src/app
+#17 DONE 0.2s
+
+#18 [stage-1 3/3] WORKDIR /usr/src/app
+#18 DONE 0.1s
+
+#19 exporting to oci image format
+#19 exporting layers
+#19 exporting layers 0.2s done
+#19 exporting manifest sha256:7ca96824d1fa7ef1946596ddc6bb4ac30acb093de2fcc0a4b10ad25313a854a3 0.0s done
+#19 exporting config sha256:240d599a9d8612866de1658b7fba1b102b656cf684eab4ed7490c5c8a6d82a4f 0.0s done
+#19 sending tarball
+#19 sending tarball 4.1s done
+#19 DONE 4.4s
+unpacking docker.io/library/l_nodejs:latest (sha256:7ca96824d1fa7ef1946596ddc6bb4ac30acb093de2fcc0a4b10ad25313a854a3)...done
+
+2022-12-13 - Total runtime was : 0 minutes 28 seconds

@@ -1,6 +1,13 @@
-ARG KEYCLOAK_GATEKEEPER_VERSION
-FROM containerinfra/oauth2-proxy:$KEYCLOAK_GATEKEEPER_VERSION
+ARG OAUTH2_PROXY_VERSION
+
+FROM quay.io/oauth2-proxy/oauth2-proxy:v${OAUTH2_PROXY_VERSION}
+
+USER 0
+
 COPY ./ca.pem /usr/local/share/ca-certificates/local-ca.crt
+
 RUN set -eux \
     update-ca-certificates \
     echo $(cat /usr/local/share/ca-certificates/local-ca.crt) >> /etc/ssl/certs/ca-certificates.crt
+
+USER 65532:65532

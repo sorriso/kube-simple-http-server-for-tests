@@ -1,11 +1,11 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: simple-nginx-sso-certificate
-  namespace: test-ingress-https-vault-sso
+  name: pod-sso-nginx-certificate
+  namespace: pod-sso
 spec:
   # Secret names are always required.
-  secretName: simple-nginx-sso-certificate
+  secretName: pod-sso-nginx-certificate
 
   # secretTemplate is optional. If set, these annotations and labels will be
   # copied to the Secret named example-com-tls. These labels and annotations will
@@ -17,13 +17,13 @@ spec:
       my-secret-annotation-1: "simple"
       my-secret-annotation-2: "nginx-sso"
     labels:
-      my-secret-label: "simple-nginx-sso-edge-tls"
+      my-secret-label: "pod-sso-nginx"
 
   duration: 720h
   renewBefore: 4h
   subject:
     organizations:
-      - consul
+      - simple
   # The use of the common name field has been deprecated since 2000 and is
   # discouraged from being used.
   commonName: simple.kube.local

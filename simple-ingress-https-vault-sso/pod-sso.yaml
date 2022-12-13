@@ -1,0 +1,100 @@
+# kubectl -n pod-sso exec -it pod-test-ingress-https-5c485b6c-qn5p6 -- /bin/sh
+# kubectl --namespace pod-sso logs pod-sso-nginx-b5c847946-nq22h
+# openssl verify -CApath /ca cert.pem
+# dd if=/dev/urandom bs=32 count=1 2>/dev/null | base64 | tr -d -- '\n' | tr -- '+/' '-_'; echo
+# https://keycloak.kube.local/auth/realms/keycloak/.well-known/openid-configuration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-sso
+  namespace: pod-sso
+  labels:
+    app: pod-sso
+
+spec:
+
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pod-sso
+
+  template:
+
+    metadata:
+      labels:
+        app: pod-sso
+
+    spec:
+
+      securityContext:
+
+        fsGroup: 1000
+
+      containers:
+
+      - name: pod-sso
+
+
+        image: l_nodejs:latest
+        imagePullPolicy: Never
+
+        ports:
+
+          - name: https
+            containerPort: 8765
+            protocol: TCP
+
+        resources:
+
+          limits:
+            cpu: 100m
+            memory: 512Mi
+
+          requests:
+            cpu: 10m
+            memory: 128Mi
+
+        readinessProbe:
+
+          tcpSocket:
+            port: https
+          failureThreshold: 2
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+
+        livenessProbe:
+
+          tcpSocket:
+            port: https
+          failureThreshold: 6
+          initialDelaySeconds: 5
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 5
+
+        volumeMounts:
+
+          - name: pod-cert
+            mountPath: "/usr/src/app/ssl/"
+
+      volumes:
+
+        - name: pod-cert
+          csi:
+            driver: csi.cert-manager.io
+            readOnly: true
+            volumeAttributes:
+              csi.cert-manager.io/issuer-kind: ClusterIssuer
+              csi.cert-manager.io/issuer-name: vault-pki-cluster-clusterissuer
+              csi.cert-manager.io/issuer-group: cert-manager.io
+              csi.cert-manager.io/common-name: simple.cluster.local
+              csi.cert-manager.io/dns-names: ${POD_NAME}.${POD_NAMESPACE}.pod.cluster.local
+              csi.cert-manager.io/duration: 720h
+              csi.cert-manager.io/renew-before: 4h
+              csi.cert-manager.io/is-ca: "false"
+              csi.cert-manager.io/key-usages: digital signature,key encipherment,server auth,client auth
+              csi.cert-manager.io/certificate-file: cert.pem
+              csi.cert-manager.io/privatekey-file: cert.key
+              csi.cert-manager.io/ca-file: ca.pem

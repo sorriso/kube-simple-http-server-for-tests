@@ -1,0 +1,33 @@
+ARG NODEJS_VERSION
+ARG DISTROLESS_VERSION
+
+FROM node:${NODEJS_VERSION} AS build
+
+RUN mkdir -p /usr/src/app/ssl
+
+WORKDIR /usr/src/app
+
+COPY ./ca.pem /usr/src/app/ssl
+COPY package.json /usr/src/app/
+COPY ./app/*.js /usr/src/app/
+COPY ./app/*.html /usr/src/app/
+
+RUN npm install -g npm@9.2.0
+RUN npm install
+# If you are building your code for production
+RUN npm ci --only=production
+
+
+
+
+
+
+FROM gcr.io/distroless/nodejs:${DISTROLESS_VERSION}
+
+COPY --from=build /usr/src/app /usr/src/app
+
+WORKDIR /usr/src/app
+
+EXPOSE 80 443
+
+CMD ["/usr/src/app/app.js"]
